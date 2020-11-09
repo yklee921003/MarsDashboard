@@ -13,22 +13,69 @@ app.use(bodyParser.json())
 app.use('/', express.static(path.join(__dirname, '../public')))
 
 // your API calls
+// Mission Manifest
+app.get("/roverInfo/:rover_name", async (req, res) => {
+  const url = "https://api.nasa.gov/mars-photos/api/v1/"
+
+  try {
+    const dataResponse = await fetch(`${url}manifests/${req.params.rover_name}?api_key=${process.env.API_KEY}`)
+          .then(res => res.json())
+          res.send({dataResponse})
+    let max_date = dataResponse.photo_manifest.max_date
+    let roverPhotos = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${req.params.rover_name}/photos?earth_date=${max_date}&api_key=${process.env.API_KEY}`)
+      .then(res => res.json())
+       res.send(roverPhotos)
+  } catch (err){
+    console.log('error:', err);
+  }
+})
+
 
 // example API call
 app.get('/apod', async (req, res) => {
-  console.log(req.params.name.toLowerCase());
-
-  //assign a data to spirit and opportunity
-  //curiousity is updats everyday. using a yesterday's
-
     try {
-        let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2015-6-3&api_key=1GQnEpGo5TrFJcvqBu78maegnuu3dl2814tnZj1c`)
+        let image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`)
             .then(res => res.json())
         res.send({ image })
     } catch (err) {
         console.log('error:', err);
     }
 })
-//`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`
+
+// app.get("/rover/roverName", async(req, res) => {
+//   try {
+//     let roverName = req.params.name.roLowerCase()
+//     let url = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?sol=1000&api_key=${process.env.API_KEY}`)
+//           .then(res => res.json())
+//           res.send({url})
+//   } catch (err){
+//     console.log("error:", err);
+//     res.send('err')
+//   }
+// })
+//
+// app.get('/rover/opportunity', async(req, res) => {
+//   try {
+//     let roverName = req.params.name.roLowerCase()
+//     let url = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?sol=1000&api_key=${process.env.API_KEY}`)
+//           .then(res => res.json())
+//           res.send({url})
+//   } catch (err){
+//     console.log('error', err);
+//     res.send('err')
+//   }
+// })
+//
+// app.get('/rover/spirit', async(req, res) => {
+//   try{
+//     let roverName = req.params.name.roLowerCase()
+//     let url = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?sol=1000&api_key=${process.env.API_KEY}`)
+//         .then(res => res.json())
+//         res.send({url})
+//   } catch(err){
+//     console.log('error', err);
+//     res.send('err')
+//   }
+// })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
