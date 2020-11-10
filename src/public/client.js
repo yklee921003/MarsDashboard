@@ -69,13 +69,16 @@ const showRoverContent = (state) =>{
           <li> Mission Status: ${ state.photos[0].rover.status} </li>
           <li> Earth Date: ${state.photos[0].earth_date} </li>
         </div>
-        <button onclick = "backButton()" class= "backButton"> Back </button>
         <div>
-
+        <button onclick = "backButton()" class= "backButton"> Back </button>
+        </div>
+        <div>
+        <img src="${state.photos[0].img_src}">
         </div>
           `
 
 };
+
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
 const backButton = (state) => {
   store = state.remove('photos');
