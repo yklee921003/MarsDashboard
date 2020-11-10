@@ -16,20 +16,10 @@ const render = async (root, state) => {
     root.innerHTML = App(state)
 }
 
-//getting rover info
-const getRoverInfo = (roverName) =>{
-  fetch(`http://localhost:3000/roverInfo/${roverName}`)
-    .then(res => res.json())
-    .then(roverInfo => {
-      updateStore(store,roverInfo)
-      console.log(roverInfo)
-
-    })
-};
 
 //when button click info show
 const clickRoverBtn = (e) =>{
-  getRoverInfo(e)
+  getRoverInfo(e.value)
 }
 const showContent =(state) =>{
   // console.log(state.getIn(["photos", 0, "rover", "name"]))
@@ -47,18 +37,18 @@ const showContent =(state) =>{
 };
 // create content
 const App = (state) => {
-    let { rovers, apod } = state;
+    // let { rovers, apod } = state;
     //same as let state = {
       // rovers: "",
       // apod:"",}
-    if (state.photos){
-      return showContent(state);
-    }
+    // if (state.photos){
+    //   return showContent(state);
+    // }
     return `
         <header>
-        <button type="button" value="curiosity" onclick="clickRoverBtn(this)">${rovers[0]}</button>
-        <button>${rovers[1]}</button>
-        <button>${rovers[2]}</button>
+        <button type="button" value="curiosity" onclick="clickRoverBtn(this)">${state.rovers[0]}</button>
+        <button type="button" value="opportunity" onclick="clickRoverBtn(this)">${state.rovers[1]}</button>
+        <button type="button" value="spirit" onclick="clickRoverBtn(this)">${state.rovers[2]}</button>
         </header>
         <main>
             ${Greeting(store.user.name)}
@@ -73,12 +63,13 @@ const App = (state) => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
-                ${ImageOfTheDay(apod)}
+                   ${ImageOfTheDay(state.apod)}
             </section>
         </main>
         <footer></footer>
     `
 }
+  // ${ImageOfTheDay(apod)}
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
@@ -122,21 +113,42 @@ const ImageOfTheDay = (apod) => {
         `)
     } else {
         return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
+
+
         `)
     }
 }
-
+// <p>${apod.image.explanation}</p>
 // ------------------------------------------------------  API CALLS
 
 // Example API call
 const getImageOfTheDay = (state) => {
     let { apod } = state
 
-    fetch(`http://localhost:3000/apod`)
+    fetch(`http://localhost:3000/${apod}`)
         .then(res => res.json())
         .then(apod => updateStore(store, { apod }))
 
-    return data
+    // return data
 }
+
+//getting rover info
+// const getRoverInfo = (roverName) =>{
+//   let {rovers} = roverName
+//   fetch(`http://localhost:3000/rover/roverName`)
+//     .then(res => res.json())
+//     .then(data => {
+//       updateStore(store,data)
+//       console.log(data)
+//     })
+// };
+const getRoverInfo = (roverName) =>{
+  fetch(`http://localhost:3000/roverInfo/${roverName}`)
+    .then(res => res.json())
+    .then(roverInfo => {
+      updateStore(store,roverInfo)
+      console.log(roverInfo)
+
+
+    })
+};
