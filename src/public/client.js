@@ -6,80 +6,82 @@ let store = {
 
 // add our markup to the page
 const root = document.getElementById('root')
-
+//update store object and send object to render
 const updateStore = (store, newState) => {
     store = Object.assign(store, newState)
     render(root, store)
 }
 
+//render page in root -> App
 const render = async (root, state) => {
     root.innerHTML = App(state)
 }
-
-
-//when button click info show
-const clickRoverBtn = (e) =>{
-  getRoverInfo(e.value);
-}
-const showContent = (state) =>{
-  // console.log(state.getIn(["photos", 0, "rover", "name"]))
-  // console.log(state.dataRespose.photo_manifest[0].rover.name)
-  return `
-        <div>
-        <ul>
-          <li> Name: ${ state.dataRespose.photo_manifest.name} </li>
-          <li> ID: ${ state.dataRespose.photo_manifest.id} </li>
-          <li> Launch Date: ${ state.dataRespose.photo_manifest.launch_date} </li>
-          <li> Landing Date: ${ state.dataRespose.photo_manifest.landing_date} </li>
-          <li> Status: ${ state.dataRespose.photo_manifest.status} </li>
-        </div>
-          `
-};
 // create content
 const App = (state) => {
-    let { rovers, apod } = state;
-    // same as let state = {
-    //   rovers: "",
-    //   apod:"",}
-    if (state.dataResponse){
-      return showContent(state.dataResponse);
+  const rovers = state.rovers;
+  const apod = state.apod.image;
+
+    if (state.photos){
+      return showRoverContent(state);
     }
     return `
         <header>
-        <button type="button" value="curiosity" onclick="clickRoverBtn(this)">${state.rovers[0]}</button>
-        <button type="button" value="opportunity" onclick="clickRoverBtn(this)">${state.rovers[1]}</button>
-        <button type="button" value="spirit" onclick="clickRoverBtn(this)">${state.rovers[2]}</button>
+        <button type="button" value="curiosity" onclick="clickRoverButton(this)">${state.rovers[0]}</button>
+        <button type="button" value="opportunity" onclick="clickRoverButton(this)">${state.rovers[1]}</button>
+        <button type="button" value="spirit" onclick="clickRoverButton(this)">${state.rovers[2]}</button>
         </header>
         <main>
-
             ${Greeting(store.user.name)}
             <section>
                 <h3>Put things on the page!</h3>
                 <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
-                   ${ImageOfTheDay(state.apod)}
+                <p> ${ImageOfTheDay(state.apod)} </p>
             </section>
         </main>
         <footer></footer>
     `
 }
-  // ${ImageOfTheDay(apod)}
-
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
     render(root, store)
 })
-
 // ------------------------------------------------------  COMPONENTS
 
+//when button click info show
+const clickRoverButton = (e) =>{
+  getRoverInfo(e.value);
+}
+
+const showRoverContent = (state) =>{
+  // let rname = state[0].rover.name;
+  // let landingDate = state.photos[0].rover.launch_date
+  // console.log(landingDate)
+  // console.log(rname);
+  let img = state.photos[0].img_src;
+  console.log(img)
+  return `
+        <div>
+        <ul>
+          <li> Rover Name: ${ state.photos[0].rover.name} </li>
+          <li> ID: ${ state.photos[0].rover.id} </li>
+          <li> Launch Date: ${ state.photos[0].rover.launch_date} </li>
+          <li> Landing Date: ${ state.photos[0].rover.landing_date} </li>
+          <li> Mission Status: ${ state.photos[0].rover.status} </li>
+          <li> Earth Date: ${state.photos[0].earth_date} </li>
+        </div>
+        <button onclick = "backButton()" class= "backButton"> Back </button>
+        <div>
+
+        </div>
+          `
+
+};
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
+const backButton = (state) => {
+  store = state.remove('photos');
+  render(root,store);
+};
+
 const Greeting = (name) => {
     if (name) {
         return `
@@ -128,16 +130,6 @@ const getImageOfTheDay = (state) => {
     // return data
 }
 
-//getting rover info
-// const getRoverInfo = (roverName) =>{
-//   let {rovers} = roverName
-//   fetch(`http://localhost:3000/rover/roverName`)
-//     .then(res => res.json())
-//     .then(data => {
-//       updateStore(store,data)
-//       console.log(data)
-//     })
-// };
 const getRoverInfo = (roverName) =>{
   fetch(`http://localhost:3000/roverInfo/${roverName}`)
 
