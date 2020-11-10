@@ -41,9 +41,9 @@ const App = (state) => {
     //same as let state = {
       // rovers: "",
       // apod:"",}
-    // if (state.photos){
-    //   return showContent(state);
-    // }
+    if (state.photos){
+     return showContent(state);
+    }
     return `
         <header>
         <button type="button" value="curiosity" onclick="clickRoverBtn(this)">${state.rovers[0]}</button>
