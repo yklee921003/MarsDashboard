@@ -19,30 +19,30 @@ const render = async (root, state) => {
 
 //when button click info show
 const clickRoverBtn = (e) =>{
-  getRoverInfo(e.value)
+  getRoverInfo(e.value);
 }
-const showContent =(state) =>{
+const showContent = (state) =>{
   // console.log(state.getIn(["photos", 0, "rover", "name"]))
-  console.log(state.photos[0].rover.name)
+  // console.log(state.dataRespose.photo_manifest[0].rover.name)
   return `
         <div>
         <ul>
-          <li> Name: ${ state.photos[0].rover.name} </li>
-          <li> ID: ${ state.photos[0].rover.id} </li>
-          <li> Launch Date: ${ state.photos[0].rover.launch_date} </li>
-          <li> Landing Date: ${ state.photos[0].rover.landing_date} </li>
-          <li> Status: ${ state.photos[0].rover.status} </li>
+          <li> Name: ${ state.dataRespose.photo_manifest.name} </li>
+          <li> ID: ${ state.dataRespose.photo_manifest.id} </li>
+          <li> Launch Date: ${ state.dataRespose.photo_manifest.launch_date} </li>
+          <li> Landing Date: ${ state.dataRespose.photo_manifest.landing_date} </li>
+          <li> Status: ${ state.dataRespose.photo_manifest.status} </li>
         </div>
           `
 };
 // create content
 const App = (state) => {
-    // let { rovers, apod } = state;
-    //same as let state = {
-      // rovers: "",
-      // apod:"",}
-    if (state.photos){
-     return showContent(state);
+    let { rovers, apod } = state;
+    // same as let state = {
+    //   rovers: "",
+    //   apod:"",}
+    if (state.dataResponse){
+      return showContent(state.dataResponse);
     }
     return `
         <header>
@@ -51,6 +51,7 @@ const App = (state) => {
         <button type="button" value="spirit" onclick="clickRoverBtn(this)">${state.rovers[2]}</button>
         </header>
         <main>
+
             ${Greeting(store.user.name)}
             <section>
                 <h3>Put things on the page!</h3>
@@ -85,7 +86,6 @@ const Greeting = (name) => {
             <h1>Welcome, ${name}!</h1>
         `
     }
-
     return `
         <h1>Hello!</h1>
     `
@@ -97,13 +97,11 @@ const ImageOfTheDay = (apod) => {
     // If image does not already exist, or it is not from today -- request it again
     const today = new Date()
     const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
-
-    console.log(photodate.getDate() === today.getDate());
+    // console.log(photodate.getDate(), today.getDate());
+    // console.log(photodate.getDate() === today.getDate());
     if (!apod || apod.date === today.getDate() ) {
         getImageOfTheDay(store)
     }
-
     // check if the photo of the day is actually type video!
     if (apod.media_type === "video") {
         return (`
@@ -111,11 +109,9 @@ const ImageOfTheDay = (apod) => {
             <p>${apod.title}</p>
             <p>${apod.explanation}</p>
         `)
-    } else {
-        return (`
-
-
-        `)
+    }
+    else {
+        return
     }
 }
 // <p>${apod.image.explanation}</p>
@@ -144,6 +140,7 @@ const getImageOfTheDay = (state) => {
 // };
 const getRoverInfo = (roverName) =>{
   fetch(`http://localhost:3000/roverInfo/${roverName}`)
+
     .then(res => res.json())
     .then(roverInfo => {
       updateStore(store,roverInfo)
