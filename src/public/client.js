@@ -88,7 +88,7 @@ const roverImages = () => {
 };
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
 const backButton = () => {
-  store = store.remove("photos");
+  delete store.photos
   render(root,store);
 };
 
