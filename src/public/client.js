@@ -73,15 +73,22 @@ const showRoverContent = (state) =>{
         <button onclick = "backButton()" class= "backButton"> Back </button>
         </div>
         <div>
-        <img src="${state.photos[0].img_src}">
+        <img src="${state.photos[0].img_src}" height="350px" width="50%">
+        <img src="${roverImages(state)}">
         </div>
           `
 
 };
 
+const roverImages = () => {
+  const roverPhotosArray = store.photos.map(photo => {
+    return `<img src="${photo.img_src}">`
+  });
+  return roverPhotosArray.reduce((a, b) => a + b)
+};
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const backButton = (state) => {
-  store = state.remove('photos');
+const backButton = () => {
+  store = store.remove("photos");
   render(root,store);
 };
 
