@@ -67,7 +67,7 @@ const ClickRoverButton = async (e) =>{
 }
 
 const ShowRoverContent = (state) =>{
-  let name1 =state.getIn(['photos',0,'rover','name'])
+  const name1 =state.getIn(['photos',0,'rover','name'])
   console.log(name1)
   return `
         <div>
@@ -131,7 +131,7 @@ const ImageOfTheDay = (apod) => {
 // Example API call
 const getImageOfTheDay = async (state) => {
   try {
-    let { apod } = state
+    const { apod } = state
       await fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
         .then(apod => updateStore(store, { apod }))
