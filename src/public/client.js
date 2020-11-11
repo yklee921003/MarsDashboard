@@ -1,14 +1,14 @@
-let store = {
-    user: { name: "Student" },
+let store = Immutable.Map( {
+    user: Immutable.Map({ name: "Student" }),
     apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
-}
+    rovers:Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
+})
 
 // add our markup to the page
 const root = document.getElementById('root')
 //update store object and send object to render
 const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
+    store = store.merge(store, newState)
     render(root, store)
 }
 
@@ -17,25 +17,39 @@ const render = async (root, state) => {
     root.innerHTML = App(state)
 }
 // create content
+  // ${Greeting(store.get('user').get('name'))}
+      // <p> ${ImageOfTheDay(state.get('apod'))} </p>
 const App = (state) => {
-  const rovers = state.rovers;
-  // const apod = state.apod.image;
+  // let {rover} = state
+  const rovers = state.get("rovers");
+  const apod = state.getIn(['apod','image']);
 
-    if (state.photos){
-      return showRoverContent(state);
+    if (state.get('photos')){
+      return ShowRoverContent(state);
     }
     return `
         <header>
-        <button type="button" value="curiosity" onclick="clickRoverButton(this)">${state.rovers[0]}</button>
-        <button type="button" value="opportunity" onclick="clickRoverButton(this)">${state.rovers[1]}</button>
-        <button type="button" value="spirit" onclick="clickRoverButton(this)">${state.rovers[2]}</button>
+
         </header>
         <main>
-            ${Greeting(store.user.name)}
-            <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p> ${ImageOfTheDay(state.apod)} </p>
+        <div class="headline">
+            <h1>MARS ROVER DASHBOARD</h1>
+        </div>
+            <section id="wrapper">
+              <div id="stars"></div>
+              <div id="stars2"></div>
+              <div id="stars3"></div>
+              <div class="roverContainer">
+                  <div class="rover1" >
+                    <button id="curiosity" type="button" value="curiosity" onclick="ClickRoverButton(this)">${state.getIn(['rovers',0])}</button>
+                  </div>
+                  <div class="rover2" >
+                    <button id="opportunity" type="button" value="opportunity" onclick="ClickRoverButton(this)">${state.getIn(['rovers',1])}</button>
+                  </div>
+                  <div class="rover3" >
+                    <button id="spirit" type="button" value="spirit" onclick="ClickRoverButton(this)">${state.getIn(['rovers',2])}</button>
+                  </div>
+              </div>
             </section>
         </main>
         <footer></footer>
@@ -48,60 +62,78 @@ window.addEventListener('load', () => {
 // ------------------------------------------------------  COMPONENTS
 
 //when button click info show
-const clickRoverButton = (e) =>{
-  getRoverInfo(e.value);
+const ClickRoverButton = async (e) =>{
+  await getRoverInfo(e.value);
 }
 
-const showRoverContent = (state) =>{
+const ShowRoverContent = (state) =>{
+  let name1 =state.getIn(['photos',0,'rover','name'])
+  console.log(name1)
   return `
         <div>
-        <ul>
-          <li> Rover Name: ${ state.photos[0].rover.name} </li>
-          <li> ID: ${ state.photos[0].rover.id} </li>
-          <li> Launch Date: ${ state.photos[0].rover.launch_date} </li>
-          <li> Landing Date: ${ state.photos[0].rover.landing_date} </li>
-          <li> Mission Status: ${ state.photos[0].rover.status} </li>
-          <li> Earth Date: ${state.photos[0].earth_date} </li>
+        <ul class="roverList">
+          <li> Rover Name: ${ state.getIn(['photos',0,'rover','name'])} </li>
+          <li> ID: ${ state.getIn(['photos',0,'rover','id'])} </li>
+          <li> Launch Date: ${ state.getIn(['photos',0,'rover','launch_date'])} </li>
+          <li> Landing Date: ${ state.getIn(['photos',0,'rover','landing_date'])} </li>
+          <li> Mission Status: ${ state.getIn(['photos',0,'rover','status'])} </li>
+          <li> Photos taken on: ${state.getIn(['photos',0,'earth_date'])} </li>
         </div>
         <div>
-        <button onclick = "backButton()" class= "backButton"> Back </button>
+        <br>
+        <button onclick= "backButton()" class="backButton"> Back </button>
         </div>
         <div>
-        <img src= "${roverImages(state)}" >
+        <br>
+      ${roverImages(state)}
         </div>
+        <br>
+          <button onclick= "backButton()" class="backButton"> Back </button>
           `
 
 };
+// const roverImg = (src) => {
+//   return `<img src= "${src}" class ="roverImage" height = "350px" width="50%">`;
+// }
+const roverImages = (state) => {
+  const roverImg = (src) => {
+    return `<img src= "${src}" class ="roverImage" height = "350px" width="50%">`;
+  }
+  return(state.get('photos'))
+        .map(photo => roverImg(photo.get("img_src")))
+        .reduce((a, b) => a + b);
+      };
 
-const roverImages = () => {
-  const roverPhotosArray = store.photos.map(photo => {
-    return `<img src= "${photo.img_src}" height="350px" width="50%">`
-  });
-  return roverPhotosArray.reduce((a, b) => a + b)
-};
+
+//   const roverPhotosArray = store.getIn(['photos']).map(photo => {
+//     return `<img src= "${getIn(['photo','img_src'])}" height="350px" width="50%">`
+//   });
+//   return roverPhotosArray.reduce((a, b) => a + b)
+// };
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
 const backButton = () => {
-  delete store.photos
+  store = store.remove("photos");
+  // delete store.photos
   render(root,store);
 };
 
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-    return `
-        <h1>Hello!</h1>
-    `
-}
+// const Greeting = (name) => {
+//     if (name) {
+//         return `
+//             <h1>Welcome, ${name}!</h1>
+//         `
+//     }
+//     return `
+//         <h1>Hello!</h1>
+//     `
+// }
 
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
 
     // If image does not already exist, or it is not from today -- request it again
     const today = new Date()
-    const photodate = new Date(apod.date)
+    // const photodate = new Date(apod.getIn(["image", "date"]));
     // console.log(photodate.getDate(), today.getDate());
     // console.log(photodate.getDate() === today.getDate());
     if (!apod || apod.date === today.getDate() ) {
@@ -123,24 +155,28 @@ const ImageOfTheDay = (apod) => {
 // ------------------------------------------------------  API CALLS
 
 // Example API call
-const getImageOfTheDay = (state) => {
+const getImageOfTheDay = async (state) => {
+  try {
     let { apod } = state
-
-    fetch(`http://localhost:3000/apod`)
+      await fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
         .then(apod => updateStore(store, { apod }))
-
     // return data
+  } catch(error){
+    console.log('errors:', err)
+  }
+
 }
 
-const getRoverInfo = (roverName) =>{
-  fetch(`http://localhost:3000/roverInfo/${roverName}`)
-
-    .then(res => res.json())
-    .then(roverInfo => {
-      updateStore(store,roverInfo)
-      console.log(roverInfo)
-
-
-    })
+const getRoverInfo = async (roverName) =>{
+  try{
+        await fetch(`http://localhost:3000/roverInfo/${roverName}`)
+            .then(res => res.json())
+            .then(roverInfo => {
+            updateStore(store,roverInfo)
+            console.log(roverInfo)
+            })
+          }catch (error){
+            console.log('error:',err);
+          }
 };
