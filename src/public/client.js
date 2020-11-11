@@ -79,22 +79,16 @@ const ShowRoverContent = (state) =>{
           <li> Mission Status: ${ state.getIn(['photos',0,'rover','status'])} </li>
           <li> Photos taken on: ${state.getIn(['photos',0,'earth_date'])} </li>
         </div>
-        <div>
         <br>
         <button onclick= "backButton()" class="backButton"> Back </button>
-        </div>
-        <div>
         <br>
       ${roverImages(state)}
-        </div>
         <br>
           <button onclick= "backButton()" class="backButton"> Back </button>
           `
 
 };
-// const roverImg = (src) => {
-//   return `<img src= "${src}" class ="roverImage" height = "350px" width="50%">`;
-// }
+
 const roverImages = (state) => {
   const roverImg = (src) => {
     return `<img src= "${src}" class ="roverImage" height = "350px" width="50%">`;
@@ -104,38 +98,18 @@ const roverImages = (state) => {
         .reduce((a, b) => a + b);
       };
 
-
-//   const roverPhotosArray = store.getIn(['photos']).map(photo => {
-//     return `<img src= "${getIn(['photo','img_src'])}" height="350px" width="50%">`
-//   });
-//   return roverPhotosArray.reduce((a, b) => a + b)
-// };
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
 const backButton = () => {
   store = store.remove("photos");
   // delete store.photos
   render(root,store);
 };
 
-// const Greeting = (name) => {
-//     if (name) {
-//         return `
-//             <h1>Welcome, ${name}!</h1>
-//         `
-//     }
-//     return `
-//         <h1>Hello!</h1>
-//     `
-// }
 
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
 
     // If image does not already exist, or it is not from today -- request it again
     const today = new Date()
-    // const photodate = new Date(apod.getIn(["image", "date"]));
-    // console.log(photodate.getDate(), today.getDate());
-    // console.log(photodate.getDate() === today.getDate());
     if (!apod || apod.date === today.getDate() ) {
         getImageOfTheDay(store)
     }
