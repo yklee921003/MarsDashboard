@@ -70,7 +70,8 @@ const ShowRoverContent = (state) =>{
   const name1 =state.getIn(['photos',0,'rover','name'])
   console.log(name1)
   return `
-        <div>
+      
+        <div class="showRoverContent">
         <ul class="roverList">
           <li> Rover Name: ${ state.getIn(['photos',0,'rover','name'])} </li>
           <li> ID: ${ state.getIn(['photos',0,'rover','id'])} </li>
@@ -78,13 +79,13 @@ const ShowRoverContent = (state) =>{
           <li> Landing Date: ${ state.getIn(['photos',0,'rover','landing_date'])} </li>
           <li> Mission Status: ${ state.getIn(['photos',0,'rover','status'])} </li>
           <li> Photos taken on: ${state.getIn(['photos',0,'earth_date'])} </li>
-        </div>
         <br>
         <button onclick= "backButton()" class="backButton"> Back </button>
         <br>
-      ${roverImages(state)}
+        ${roverImages(state)}
         <br>
-          <button onclick= "backButton()" class="backButton"> Back </button>
+        <button onclick= "backButton()" class="backButton"> Back </button>
+        </div>
           `
 
 };
