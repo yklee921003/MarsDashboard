@@ -642,9 +642,10 @@ border: none;
   font-family: 'Montserrat Alternates', sans-serif;
   color: white
 }
-.backButton{
-
+.showRoverContent{
+  text-align: center;
 }
+
 
 /* -------------------  MOBILE  --------------------- */
 
